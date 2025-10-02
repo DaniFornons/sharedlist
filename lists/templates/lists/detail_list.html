@@ -1,0 +1,53 @@
+{% extends "home.html" %}
+
+{% block content %}
+<form id="add-form" method="post" action="{% url 'lists:add_item' pk=list.pk %}">
+  {% csrf_token %}
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>Done</th>
+      <th>Product</th>
+      <th>Quantity</th>
+      <th>Notes</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for item in items %}
+      <tr>
+        <td>
+          <form method="post" action="{% url 'lists:toggle_item' pk=list.pk item_id=item.pk %}">
+            {% csrf_token %}
+            <input type="checkbox" name="done" {% if item.done %}checked{% endif %}
+                   onchange="this.form.submit()">
+          </form>
+        </td>
+        <td>{{ item.name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.notes }}</td>
+        <td>
+          <form method="post" action="{% url 'lists:delete_item' pk=list.pk item_id=item.pk %}"
+                onsubmit="return confirm('Delete this product?');">
+            {% csrf_token %}
+            <button type="submit">🗑️</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+
+  <tfoot>
+    <tr>
+      <td></td>
+      <td>{{ add_form.name }}</td>
+      <td>{{ add_form.quantity }}</td>
+      <td>{{ add_form.notes }}</td>
+      <td><button type="submit" form="add-form">➕</button></td>
+    </tr>
+  </tfoot>
+</table>
+{% endblock %}

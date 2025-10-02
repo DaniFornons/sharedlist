@@ -1,0 +1,50 @@
+{% extends "home.html" %}
+{% block title %}Lists{% endblock %}
+
+{% block content %}
+<h1>My Lists</h1>
+
+<form id="add-list-form" method="post" action="{% url 'lists:add_list' %}">
+  {% csrf_token %}
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>Actions</th>
+      <th>List</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for l in lists %}
+      <tr>
+        <td>
+          <form method="post"
+                action="{% url 'lists:delete_list' l.pk %}"
+                onsubmit="return confirm('Delete this list?');"
+                style="display:inline">
+            {% csrf_token %}
+            <button type="submit" title="Delete">🗑️</button>
+          </form>
+        </td>
+        <td><a href="{% url 'lists:detail_list' l.pk %}">{{ l.name }}</a></td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="2">It is empty.</td></tr>
+    {% endfor %}
+  </tbody>
+
+  <tfoot>
+    <tr>
+      <td>
+        <button type="submit" form="add-list-form">➕</button>
+      </td>
+      <td>
+        {{ add_list_form.non_field_errors }}
+        {{ add_list_form.name.errors }}
+        {{ add_list_form.name }}
+      </td>       
+    </tr>
+  </tfoot>
+</table>
+{% endblock %}
